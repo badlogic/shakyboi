@@ -1,7 +1,5 @@
 package io.marioslab.shakyboi.classfile;
 
-import io.marioslab.shakyboi.util.ByteArrayOutput;
-
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
@@ -91,7 +89,7 @@ public class ClassFile {
     }
 
     public <T> T getConstantPoolEntry(int index) {
-        return (T)constantPool.get(index);
+        return (T) constantPool.get(index);
     }
 
     public String getName() {
@@ -395,7 +393,7 @@ public class ClassFile {
             return clz.getUtf8String(nameIndex);
         }
 
-        public void write (DataOutputStream out) throws IOException {
+        public void write(DataOutputStream out) throws IOException {
             out.writeInt(info.length);
             out.write(info);
         }
