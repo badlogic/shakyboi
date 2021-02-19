@@ -72,58 +72,58 @@ public class ClassFileIO {
         int tag = entry.tag;
         out.write(tag);
 
-        if (entry instanceof ClassFile.Utf8PoolEntry) {
-            ClassFile.Utf8PoolEntry utf8 = (ClassFile.Utf8PoolEntry) entry;
+        if (entry instanceof ClassFile.Utf8Entry) {
+            ClassFile.Utf8Entry utf8 = (ClassFile.Utf8Entry) entry;
             out.writeShort(utf8.bytes.length);
             out.write(utf8.bytes);
-        } else if (entry instanceof ClassFile.IntPoolEntry) {
-            out.writeInt(((ClassFile.IntPoolEntry) entry).value);
-        } else if (entry instanceof ClassFile.FloatPoolEntry) {
-            out.writeFloat(((ClassFile.FloatPoolEntry) entry).value);
-        } else if (entry instanceof ClassFile.LongPoolEntry) {
-            ClassFile.LongPoolEntry longEntry = (ClassFile.LongPoolEntry) entry;
+        } else if (entry instanceof ClassFile.IntEntry) {
+            out.writeInt(((ClassFile.IntEntry) entry).value);
+        } else if (entry instanceof ClassFile.FloatEntry) {
+            out.writeFloat(((ClassFile.FloatEntry) entry).value);
+        } else if (entry instanceof ClassFile.LongEntry) {
+            ClassFile.LongEntry longEntry = (ClassFile.LongEntry) entry;
             out.writeInt(longEntry.highBytes);
             out.writeInt(longEntry.lowBytes);
-        } else if (entry instanceof ClassFile.DoublePoolEntry) {
-            ClassFile.DoublePoolEntry doubleEntry = (ClassFile.DoublePoolEntry) entry;
+        } else if (entry instanceof ClassFile.DoubleEntry) {
+            ClassFile.DoubleEntry doubleEntry = (ClassFile.DoubleEntry) entry;
             out.writeInt(doubleEntry.highBytes);
             out.writeInt(doubleEntry.lowBytes);
-        } else if (entry instanceof ClassFile.PackagePoolEntry) {
-            out.writeShort(((ClassFile.PackagePoolEntry) entry).nameIndex);
-        } else if (entry instanceof ClassFile.ModulePoolEntry) {
-            out.writeShort(((ClassFile.ModulePoolEntry) entry).nameIndex);
-        } else if (entry instanceof ClassFile.ClassPoolEntry) {
-            out.writeShort(((ClassFile.ClassPoolEntry) entry).nameIndex);
-        } else if (entry instanceof ClassFile.StringPoolEntry) {
-            out.writeShort(((ClassFile.StringPoolEntry) entry).stringIndex);
-        } else if (entry instanceof ClassFile.FieldRefPoolEntry) {
-            ClassFile.FieldRefPoolEntry fmiEntry = (ClassFile.FieldRefPoolEntry) entry;
+        } else if (entry instanceof ClassFile.PackageEntry) {
+            out.writeShort(((ClassFile.PackageEntry) entry).nameIndex);
+        } else if (entry instanceof ClassFile.ModuleEntry) {
+            out.writeShort(((ClassFile.ModuleEntry) entry).nameIndex);
+        } else if (entry instanceof ClassFile.ClassInfoEntry) {
+            out.writeShort(((ClassFile.ClassInfoEntry) entry).nameIndex);
+        } else if (entry instanceof ClassFile.StringEntry) {
+            out.writeShort(((ClassFile.StringEntry) entry).stringIndex);
+        } else if (entry instanceof ClassFile.FieldRefEntry) {
+            ClassFile.FieldRefEntry fmiEntry = (ClassFile.FieldRefEntry) entry;
             out.writeShort(fmiEntry.classIndex);
             out.writeShort(fmiEntry.nameAndTypeIndex);
-        } else if (entry instanceof ClassFile.MethodRefPoolEntry) {
-            ClassFile.MethodRefPoolEntry fmiEntry = (ClassFile.MethodRefPoolEntry) entry;
+        } else if (entry instanceof ClassFile.MethodRefEntry) {
+            ClassFile.MethodRefEntry fmiEntry = (ClassFile.MethodRefEntry) entry;
             out.writeShort(fmiEntry.classIndex);
             out.writeShort(fmiEntry.nameAndTypeIndex);
-        } else if (entry instanceof ClassFile.InterfaceMethodRefPoolEntry) {
-            ClassFile.InterfaceMethodRefPoolEntry fmiEntry = (ClassFile.InterfaceMethodRefPoolEntry) entry;
+        } else if (entry instanceof ClassFile.InterfaceMethodRefEntry) {
+            ClassFile.InterfaceMethodRefEntry fmiEntry = (ClassFile.InterfaceMethodRefEntry) entry;
             out.writeShort(fmiEntry.classIndex);
             out.writeShort(fmiEntry.nameAndTypeIndex);
-        } else if (entry instanceof ClassFile.NameAndTypePoolEntry) {
-            ClassFile.NameAndTypePoolEntry ntEntry = (ClassFile.NameAndTypePoolEntry) entry;
+        } else if (entry instanceof ClassFile.NameAndTypeEntry) {
+            ClassFile.NameAndTypeEntry ntEntry = (ClassFile.NameAndTypeEntry) entry;
             out.writeShort(ntEntry.nameIndex);
             out.writeShort(ntEntry.descriptorIndex);
-        } else if (entry instanceof ClassFile.MethodHandlePoolEntry) {
-            ClassFile.MethodHandlePoolEntry mEntry = (ClassFile.MethodHandlePoolEntry) entry;
+        } else if (entry instanceof ClassFile.MethodHandleEntry) {
+            ClassFile.MethodHandleEntry mEntry = (ClassFile.MethodHandleEntry) entry;
             out.write(mEntry.referenceKind);
             out.writeShort(mEntry.referenceIndex);
-        } else if (entry instanceof ClassFile.MethodTypePoolEntry) {
-            out.writeShort(((ClassFile.MethodTypePoolEntry) entry).descriptorIndex);
-        } else if (entry instanceof ClassFile.DynamicPoolEntry) {
-            ClassFile.DynamicPoolEntry dEntry = (ClassFile.DynamicPoolEntry) entry;
+        } else if (entry instanceof ClassFile.MethodTypeEntry) {
+            out.writeShort(((ClassFile.MethodTypeEntry) entry).descriptorIndex);
+        } else if (entry instanceof ClassFile.DynamicEntry) {
+            ClassFile.DynamicEntry dEntry = (ClassFile.DynamicEntry) entry;
             out.writeShort(dEntry.bootstrapMethodAttributeIndex);
             out.writeShort(dEntry.nameAndTypeIndex);
-        } else if (entry instanceof ClassFile.InvokeDynamicPoolEntry) {
-            ClassFile.InvokeDynamicPoolEntry dEntry = (ClassFile.InvokeDynamicPoolEntry) entry;
+        } else if (entry instanceof ClassFile.InvokeDynamicEntry) {
+            ClassFile.InvokeDynamicEntry dEntry = (ClassFile.InvokeDynamicEntry) entry;
             out.writeShort(dEntry.bootstrapMethodAttributeIndex);
             out.writeShort(dEntry.nameAndTypeIndex);
         } else {
@@ -171,71 +171,71 @@ public class ClassFileIO {
                     byte[] bytes = new byte[len];
                     for (int j = 0; j < len; j++)
                         bytes[j] = in.readByte();
-                    entry = new ClassFile.Utf8PoolEntry(clz, tag, bytes);
+                    entry = new ClassFile.Utf8Entry(clz, bytes);
                     break;
 
                 case ClassFile.CONSTANT_INTEGER:
-                    entry = new ClassFile.IntPoolEntry(clz, tag, in.readInt());
+                    entry = new ClassFile.IntEntry(clz, in.readInt());
                     break;
 
                 case ClassFile.CONSTANT_FLOAT:
-                    entry = new ClassFile.FloatPoolEntry(clz, tag, in.readFloat());
+                    entry = new ClassFile.FloatEntry(clz, in.readFloat());
                     break;
 
                 case ClassFile.CONSTANT_LONG:
-                    entry = new ClassFile.LongPoolEntry(clz, tag, in.readInt(), in.readInt());
+                    entry = new ClassFile.LongEntry(clz, in.readInt(), in.readInt());
                     break;
 
                 case ClassFile.CONSTANT_DOUBLE:
-                    entry = new ClassFile.DoublePoolEntry(clz, tag, in.readInt(), in.readInt());
+                    entry = new ClassFile.DoubleEntry(clz, in.readInt(), in.readInt());
                     break;
 
                 case ClassFile.CONSTANT_PACKAGE:
-                    entry = new ClassFile.PackagePoolEntry(clz, tag, in.readUnsignedShort());
+                    entry = new ClassFile.PackageEntry(clz, in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_MODULE:
-                    entry = new ClassFile.ModulePoolEntry(clz, tag, in.readUnsignedShort());
+                    entry = new ClassFile.ModuleEntry(clz, in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_CLASS:
-                    entry = new ClassFile.ClassPoolEntry(clz, tag, in.readUnsignedShort());
+                    entry = new ClassFile.ClassInfoEntry(clz, in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_STRING:
-                    entry = new ClassFile.StringPoolEntry(clz, tag, in.readUnsignedShort());
+                    entry = new ClassFile.StringEntry(clz, in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_FIELDREF:
-                    entry = new ClassFile.FieldRefPoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.FieldRefEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_METHODREF:
-                    entry = new ClassFile.MethodRefPoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.MethodRefEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_INTERFACEMETHODREF:
-                    entry = new ClassFile.InterfaceMethodRefPoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.InterfaceMethodRefEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_NAMEANDTYPE:
-                    entry = new ClassFile.NameAndTypePoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.NameAndTypeEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_METHODHANDLE:
-                    entry = new ClassFile.MethodHandlePoolEntry(clz, tag, in.readUnsignedByte(), in.readUnsignedShort());
+                    entry = new ClassFile.MethodHandleEntry(clz, in.readUnsignedByte(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_METHODTYPE:
-                    entry = new ClassFile.MethodTypePoolEntry(clz, tag, in.readUnsignedShort());
+                    entry = new ClassFile.MethodTypeEntry(clz, in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_DYNAMIC:
-                    entry = new ClassFile.DynamicPoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.DynamicEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 case ClassFile.CONSTANT_INVOKEDYNAMIC:
-                    entry = new ClassFile.InvokeDynamicPoolEntry(clz, tag, in.readUnsignedShort(), in.readUnsignedShort());
+                    entry = new ClassFile.InvokeDynamicEntry(clz, in.readUnsignedShort(), in.readUnsignedShort());
                     break;
 
                 default:
@@ -280,8 +280,7 @@ public class ClassFileIO {
     public static ClassFile.AttributeInfo readAttribute(DataInputStream in, ClassFile clz) throws IOException {
         int attributeNameIndex = in.readUnsignedShort();
         int attributeLength = in.readInt();
-        byte[] info = new byte[attributeLength];
-        in.readFully(info);
-        return new ClassFile.AttributeInfo(clz, attributeNameIndex, info);
+        String attributeName = clz.getUtf8String(attributeNameIndex);
+        return new ClassFile.AttributeInfo(clz, attributeNameIndex, attributeLength, in);
     }
 }
