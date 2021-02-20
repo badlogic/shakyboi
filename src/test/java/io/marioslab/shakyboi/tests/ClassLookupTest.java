@@ -2,6 +2,7 @@ package io.marioslab.shakyboi.tests;
 
 import io.marioslab.shakyboi.lookup.*;
 import io.marioslab.shakyboi.util.JarFileWriter;
+import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
@@ -14,11 +15,13 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 
 
 public class ClassLookupTest {
+    static File classFilesDir;
     static File jarFile;
 
     @BeforeAll
-    public static void setupTests() throws IOException {
+    public static void beforeAll() throws IOException {
         jarFile = Files.createTempFile("test", "jar").toFile();
+        classFilesDir = Files.createTempDirectory("temp-classes").toFile();
         try (var writer = new JarFileWriter(jarFile)) {
             var classLookup = new InMemoryClassLookup();
             String[] classes = {
@@ -29,8 +32,19 @@ public class ClassLookupTest {
                     "io/marioslab/shakyboi/tests/apps/simple/Zap",
                     "io/marioslab/shakyboi/tests/apps/simple/Zop"
             };
-            for (var clazz : classes) writer.addFile(clazz + ".class", classLookup.findClass(clazz));
+            for (var clazz : classes) {
+                var bytes = classLookup.findClass(clazz);
+                writer.addFile(clazz + ".class", bytes);
+                File classFile = new File(classFilesDir, clazz + ".class");
+                classFile.getParentFile().mkdirs();
+                Files.write(classFile.toPath(), bytes);
+            }
         }
+    }
+
+    @AfterAll
+    public static void afterAll() throws IOException {
+        jarFile.delete();
     }
 
     @Test
@@ -42,7 +56,7 @@ public class ClassLookupTest {
 
     @Test
     public void testDirectoryClassLookup() {
-        var classLookup = new DirectoryClassLookup(new File("target/test-classes"));
+        var classLookup = new DirectoryClassLookup(classFilesDir);
         assertNotNull(classLookup.findClass("io/marioslab/shakyboi/tests/apps/simple/App"));
         assertNull(classLookup.findClass("does/not/Exist"));
     }
