@@ -26,7 +26,7 @@ public class ByteArrayOutput extends OutputStream {
         buffer[index++] = (byte) value;
     }
 
-    public void write(byte b[]) {
+    public void write(byte[] b) {
         write(b, 0, b.length);
     }
 
