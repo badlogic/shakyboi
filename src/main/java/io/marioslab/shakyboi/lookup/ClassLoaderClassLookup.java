@@ -5,13 +5,13 @@ import java.net.URL;
 
 /**
  * A {@link ClassLookup} that searches for .class files
- * via the class loader used to load the {@link InMemoryClassLookup} instance.
+ * via the class loader used to load the {@link ClassLoaderClassLookup} instance.
  */
-public class InMemoryClassLookup implements ClassLookup {
+public class ClassLoaderClassLookup implements ClassLookup {
     @Override
     public byte[] findClass(String name) {
         name = name + ".class";
-        URL resource = InMemoryClassLookup.class.getClassLoader().getResource(name);
+        URL resource = ClassLoaderClassLookup.class.getClassLoader().getResource(name);
         if (resource == null) return null;
         try {
             return resource.openStream().readAllBytes();

@@ -23,7 +23,7 @@ public class ClassLookupTest {
         jarFile = Files.createTempFile("test", "jar").toFile();
         classFilesDir = Files.createTempDirectory("temp-classes").toFile();
         try (var writer = new JarFileWriter(jarFile)) {
-            var classLookup = new InMemoryClassLookup();
+            var classLookup = new ClassLoaderClassLookup();
             String[] classes = {
                     "io/marioslab/shakyboi/tests/apps/simple/App",
                     "io/marioslab/shakyboi/tests/apps/simple/Foo",
@@ -48,8 +48,8 @@ public class ClassLookupTest {
     }
 
     @Test
-    public void testInMemoryClassLookup() {
-        var classLookup = new InMemoryClassLookup();
+    public void testClassLoaderClassLookup() {
+        var classLookup = new ClassLoaderClassLookup();
         assertNotNull(classLookup.findClass("io/marioslab/shakyboi/tests/apps/simple/App"));
         assertNull(classLookup.findClass("does/not/Exist"));
     }
@@ -65,7 +65,7 @@ public class ClassLookupTest {
     public void testJarClassLookup() throws IOException {
         File jarFile = Files.createTempFile("test", "jar").toFile();
         try (var writer = new JarFileWriter(jarFile)) {
-            var classLookup = new InMemoryClassLookup();
+            var classLookup = new ClassLoaderClassLookup();
             String[] classes = {
                     "io/marioslab/shakyboi/tests/apps/simple/App",
                     "io/marioslab/shakyboi/tests/apps/simple/Foo",
