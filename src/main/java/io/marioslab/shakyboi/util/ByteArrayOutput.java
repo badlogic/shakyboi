@@ -21,6 +21,34 @@ public class ByteArrayOutput extends OutputStream {
         this.buffer = buffer;
     }
 
+    static public void writeInt(byte[] buffer, int i, int value) {
+        buffer[i] = (byte) (value >> 24);
+        buffer[i + 1] = (byte) (value >> 16);
+        buffer[i + 2] = (byte) (value >> 8);
+        buffer[i + 3] = (byte) value;
+    }
+
+    static public void writeInt(byte[] buffer, int value) {
+        buffer[0] = (byte) (value >> 24);
+        buffer[1] = (byte) (value >> 16);
+        buffer[2] = (byte) (value >> 8);
+        buffer[3] = (byte) value;
+    }
+
+    static public void writeIntLE(byte[] buffer, int i, int value) {
+        buffer[i] = (byte) value;
+        buffer[i + 1] = (byte) (value >> 8);
+        buffer[i + 2] = (byte) (value >> 16);
+        buffer[i + 3] = (byte) (value >> 24);
+    }
+
+    static public void writeIntLE(byte[] buffer, int value) {
+        buffer[0] = (byte) value;
+        buffer[1] = (byte) (value >> 8);
+        buffer[2] = (byte) (value >> 16);
+        buffer[3] = (byte) (value >> 24);
+    }
+
     public void write(int value) {
         if (index + 1 >= buffer.length) ensureCapacity(1);
         buffer[index++] = (byte) value;
@@ -203,33 +231,5 @@ public class ByteArrayOutput extends OutputStream {
 
     public void writeDoubleLE(double value) {
         writeLongLE(Double.doubleToLongBits(value));
-    }
-
-    static public void writeInt(byte[] buffer, int i, int value) {
-        buffer[i] = (byte) (value >> 24);
-        buffer[i + 1] = (byte) (value >> 16);
-        buffer[i + 2] = (byte) (value >> 8);
-        buffer[i + 3] = (byte) value;
-    }
-
-    static public void writeInt(byte[] buffer, int value) {
-        buffer[0] = (byte) (value >> 24);
-        buffer[1] = (byte) (value >> 16);
-        buffer[2] = (byte) (value >> 8);
-        buffer[3] = (byte) value;
-    }
-
-    static public void writeIntLE(byte[] buffer, int i, int value) {
-        buffer[i] = (byte) value;
-        buffer[i + 1] = (byte) (value >> 8);
-        buffer[i + 2] = (byte) (value >> 16);
-        buffer[i + 3] = (byte) (value >> 24);
-    }
-
-    static public void writeIntLE(byte[] buffer, int value) {
-        buffer[0] = (byte) value;
-        buffer[1] = (byte) (value >> 8);
-        buffer[2] = (byte) (value >> 16);
-        buffer[3] = (byte) (value >> 24);
     }
 }

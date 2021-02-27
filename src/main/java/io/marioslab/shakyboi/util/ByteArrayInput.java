@@ -22,6 +22,78 @@ public class ByteArrayInput extends InputStream {
         end = offset + length;
     }
 
+    static public int readInt(byte[] buffer, int i) {
+        return buffer[i] << 24 //
+                | (buffer[i + 1] & 0xff) << 16 //
+                | (buffer[i + 2] & 0xff) << 8 //
+                | buffer[i + 3] & 0xff;
+    }
+
+    static public int readInt(byte[] buffer) {
+        return buffer[0] << 24 //
+                | (buffer[1] & 0xff) << 16 //
+                | (buffer[2] & 0xff) << 8 //
+                | buffer[3] & 0xff;
+    }
+
+    static public int readIntLE(byte[] buffer, int i) {
+        return buffer[i] & 0xff //
+                | (buffer[i + 1] & 0xff) << 8 //
+                | (buffer[i + 2] & 0xff) << 16 //
+                | buffer[i + 3] << 24;
+    }
+
+    static public int readIntLE(byte[] buffer) {
+        return buffer[0] & 0xff //
+                | (buffer[1] & 0xff) << 8 //
+                | (buffer[2] & 0xff) << 16 //
+                | buffer[3] << 24;
+    }
+
+    static public long readLong(byte[] buffer, int i) {
+        return (long) buffer[i] << 56 //
+                | (buffer[i + 1] & 0xffL) << 48 //
+                | (buffer[i + 2] & 0xffL) << 40 //
+                | (buffer[i + 3] & 0xffL) << 32 //
+                | (buffer[i + 4] & 0xffL) << 24 //
+                | (buffer[i + 5] & 0xff) << 16 //
+                | (buffer[i + 6] & 0xff) << 8 //
+                | buffer[i + 7] & 0xff;
+    }
+
+    static public long readLong(byte[] buffer) {
+        return (long) buffer[0] << 56 //
+                | (buffer[1] & 0xffL) << 48 //
+                | (buffer[2] & 0xffL) << 40 //
+                | (buffer[3] & 0xffL) << 32 //
+                | (buffer[4] & 0xffL) << 24 //
+                | (buffer[5] & 0xff) << 16 //
+                | (buffer[6] & 0xff) << 8 //
+                | buffer[7] & 0xff;
+    }
+
+    static public long readLongLE(byte[] buffer, int i) {
+        return buffer[i] & 0xff //
+                | (buffer[i + 1] & 0xff) << 8 //
+                | (buffer[i + 2] & 0xff) << 16 //
+                | (buffer[i + 3] & 0xffL) << 24 //
+                | (buffer[i + 4] & 0xffL) << 32 //
+                | (buffer[i + 5] & 0xffL) << 40 //
+                | (buffer[i + 6] & 0xffL) << 48 //
+                | (long) buffer[i + 7] << 56;
+    }
+
+    static public long readLongLE(byte[] buffer) {
+        return buffer[0] & 0xff //
+                | (buffer[1] & 0xff) << 8 //
+                | (buffer[2] & 0xff) << 16 //
+                | (buffer[3] & 0xffL) << 24 //
+                | (buffer[4] & 0xffL) << 32 //
+                | (buffer[5] & 0xffL) << 40 //
+                | (buffer[6] & 0xffL) << 48 //
+                | (long) buffer[7] << 56;
+    }
+
     public int read() {
         if (index >= end) return -1;
         return buffer[index++] & 0xff;
@@ -201,77 +273,5 @@ public class ByteArrayInput extends InputStream {
         String value = new String(buffer, index, length, UTF_8);
         index += length;
         return value;
-    }
-
-    static public int readInt(byte[] buffer, int i) {
-        return buffer[i] << 24 //
-                | (buffer[i + 1] & 0xff) << 16 //
-                | (buffer[i + 2] & 0xff) << 8 //
-                | buffer[i + 3] & 0xff;
-    }
-
-    static public int readInt(byte[] buffer) {
-        return buffer[0] << 24 //
-                | (buffer[1] & 0xff) << 16 //
-                | (buffer[2] & 0xff) << 8 //
-                | buffer[3] & 0xff;
-    }
-
-    static public int readIntLE(byte[] buffer, int i) {
-        return buffer[i] & 0xff //
-                | (buffer[i + 1] & 0xff) << 8 //
-                | (buffer[i + 2] & 0xff) << 16 //
-                | buffer[i + 3] << 24;
-    }
-
-    static public int readIntLE(byte[] buffer) {
-        return buffer[0] & 0xff //
-                | (buffer[1] & 0xff) << 8 //
-                | (buffer[2] & 0xff) << 16 //
-                | buffer[3] << 24;
-    }
-
-    static public long readLong(byte[] buffer, int i) {
-        return (long) buffer[i] << 56 //
-                | (buffer[i + 1] & 0xffL) << 48 //
-                | (buffer[i + 2] & 0xffL) << 40 //
-                | (buffer[i + 3] & 0xffL) << 32 //
-                | (buffer[i + 4] & 0xffL) << 24 //
-                | (buffer[i + 5] & 0xff) << 16 //
-                | (buffer[i + 6] & 0xff) << 8 //
-                | buffer[i + 7] & 0xff;
-    }
-
-    static public long readLong(byte[] buffer) {
-        return (long) buffer[0] << 56 //
-                | (buffer[1] & 0xffL) << 48 //
-                | (buffer[2] & 0xffL) << 40 //
-                | (buffer[3] & 0xffL) << 32 //
-                | (buffer[4] & 0xffL) << 24 //
-                | (buffer[5] & 0xff) << 16 //
-                | (buffer[6] & 0xff) << 8 //
-                | buffer[7] & 0xff;
-    }
-
-    static public long readLongLE(byte[] buffer, int i) {
-        return buffer[i] & 0xff //
-                | (buffer[i + 1] & 0xff) << 8 //
-                | (buffer[i + 2] & 0xff) << 16 //
-                | (buffer[i + 3] & 0xffL) << 24 //
-                | (buffer[i + 4] & 0xffL) << 32 //
-                | (buffer[i + 5] & 0xffL) << 40 //
-                | (buffer[i + 6] & 0xffL) << 48 //
-                | (long) buffer[i + 7] << 56;
-    }
-
-    static public long readLongLE(byte[] buffer) {
-        return buffer[0] & 0xff //
-                | (buffer[1] & 0xff) << 8 //
-                | (buffer[2] & 0xff) << 16 //
-                | (buffer[3] & 0xffL) << 24 //
-                | (buffer[4] & 0xffL) << 32 //
-                | (buffer[5] & 0xffL) << 40 //
-                | (buffer[6] & 0xffL) << 48 //
-                | (long) buffer[7] << 56;
     }
 }

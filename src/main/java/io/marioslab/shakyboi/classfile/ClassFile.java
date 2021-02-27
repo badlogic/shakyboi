@@ -7,6 +7,12 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
+/**
+ * A parsed representation of a <code>.class</code> file.
+ *
+ * @see ClassFileReader
+ * @see ClassFileWriter
+ */
 public class ClassFile {
     // Constant pool tags
     public static final int CONSTANT_UTF8 = 1;

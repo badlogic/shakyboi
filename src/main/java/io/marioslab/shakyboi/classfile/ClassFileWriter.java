@@ -7,9 +7,9 @@ import java.util.List;
 
 /**
  * Writes a {@link ClassFile} to a byte array according to the <code>.class</code> file format specification.
- * 
+ *
  * @see {@link #writeClassFile(ClassFile)}
- * 
+ * <p>
  * See <a href="https://docs.oracle.com/javase/specs/jvms/se15/html/jvms-4.html">The Java Virtual Machine Specification</a>.
  */
 public class ClassFileWriter {
