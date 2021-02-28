@@ -31,12 +31,12 @@ public class ClassDependencyGraphGenerator {
      */
     public static ClassDependencyGraph generate(ClassLookup appClassLookup, ClassLookup bootstrapClassLookup, String... rootClassNames) throws IOException {
         var rootClasses = new ArrayList<ClassDependencyGraph.ClassNode>(); // the root classes nodes
-        var classes = new HashMap<String, ClassDependencyGraph.ClassNode>(); // all reachable classes, processed and unprocessed
+        var reachableClasses = new HashMap<String, ClassDependencyGraph.ClassNode>(); // all reachable classes, processed and unprocessed
         var classesToProcess = new ArrayList<ClassDependencyGraph.ClassNode>(); // classes that still need to be processed
 
         // Lookup all root classes and add them to to the list of classes to be processed.
         for (String className : rootClassNames) {
-            var classNode = lookupClassNode(className, classes, bootstrapClassLookup, appClassLookup);
+            var classNode = lookupClassNode(className, reachableClasses, bootstrapClassLookup, appClassLookup);
             classNode.isRootClass = true;
             rootClasses.add(classNode);
             classesToProcess.add(classNode);
@@ -58,10 +58,11 @@ public class ClassDependencyGraphGenerator {
                 continue;
 
             // Collect the classes referenced by this class and add them to the list
-            // of classes to be processed if they haven't been processed yet.
+            // of classes to be processed if they haven't been processed yet. Also
+            // add the classes to this class' set of classes it depends on.
             Set<String> collectedClassNames = collectClassNames(classNode);
             for (String className : collectedClassNames) {
-                var otherClassNode = lookupClassNode(className, classes, bootstrapClassLookup, appClassLookup);
+                var otherClassNode = lookupClassNode(className, reachableClasses, bootstrapClassLookup, appClassLookup);
                 // Don't depend on this class itself
                 if (otherClassNode.classFile.getName().equals(classNode.classFile.getName()))
                     continue;
@@ -71,7 +72,7 @@ public class ClassDependencyGraphGenerator {
                 classNode.dependsOn.add(otherClassNode);
             }
         }
-        return new ClassDependencyGraph(rootClasses, classes);
+        return new ClassDependencyGraph(rootClasses, reachableClasses);
     }
 
     /**
