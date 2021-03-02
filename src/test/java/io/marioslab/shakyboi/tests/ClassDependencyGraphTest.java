@@ -2,8 +2,8 @@ package io.marioslab.shakyboi.tests;
 
 import io.marioslab.shakyboi.graph.ClassDependencyGraph;
 import io.marioslab.shakyboi.graph.ClassDependencyGraphGenerator;
-import io.marioslab.shakyboi.lookup.ClassLoaderClassLookup;
-import io.marioslab.shakyboi.lookup.JrtImageClassLookup;
+import io.marioslab.shakyboi.lookup.ClassLoaderLookup;
+import io.marioslab.shakyboi.lookup.JrtImageLookup;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ClassDependencyGraphTest {
     @Test
     public void testSimple() throws IOException {
-        var graph = ClassDependencyGraphGenerator.generate(new ClassLoaderClassLookup(), new JrtImageClassLookup(), "io/marioslab/shakyboi/tests/apps/simple/App");
+        var graph = ClassDependencyGraphGenerator.generate(new ClassLoaderLookup(), new JrtImageLookup(), "io/marioslab/shakyboi/tests/apps/simple/App");
         var appClasses = new HashMap<String, ClassDependencyGraph.ClassNode>();
         var bootstrapClasses = new HashMap<String, ClassDependencyGraph.ClassNode>();
         for (var entry : graph.reachableClasses.entrySet()) {

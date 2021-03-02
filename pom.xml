@@ -107,7 +107,7 @@
                     </descriptorRefs>
                     <archive>
                         <manifest>
-                            <mainClass>io.marioslab.shakyboi.Main</mainClass>
+                            <mainClass>io.marioslab.shakyboi.Shakyboi</mainClass>
                         </manifest>
                     </archive>
                     <finalName>shakyboi</finalName>

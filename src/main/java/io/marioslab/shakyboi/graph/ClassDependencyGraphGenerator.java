@@ -2,7 +2,7 @@ package io.marioslab.shakyboi.graph;
 
 import io.marioslab.shakyboi.classfile.ClassFile;
 import io.marioslab.shakyboi.classfile.ClassFileReader;
-import io.marioslab.shakyboi.lookup.ClassLookup;
+import io.marioslab.shakyboi.lookup.Lookup;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -22,21 +22,21 @@ public class ClassDependencyGraphGenerator {
      * it directly depends on is evaluated. The process is then repeated for the newly identified classes
      * until no more new classes can be found.
      *
-     * @param appClassLookup       the {@link ClassLookup} to search for application classes, like root classes.
-     * @param bootstrapClassLookup the {@link ClassLookup} to search for boot classes, e.g. java.lang.Object.
-     * @param rootClassNames       the names of root classes to start the search for all dependencies for. The names
-     *                             must be given as {@link <a href="https://docs.oracle.com/javase/specs/jvms/se15/html/jvms-4.html#jvms-4.2.1">internal names</a>}
+     * @param appLookup       the {@link Lookup} to search for application classes, like root classes.
+     * @param bootstrapLookup the {@link Lookup} to search for boot classes, e.g. java.lang.Object.
+     * @param rootClassNames  the names of root classes to start the search for all dependencies for. The names
+     *                        must be given as {@link <a href="https://docs.oracle.com/javase/specs/jvms/se15/html/jvms-4.html#jvms-4.2.1">internal names</a>}
      * @return the {@link ClassDependencyGraph}
      * @throws IOException in case a class could not be looked up or parsed.
      */
-    public static ClassDependencyGraph generate(ClassLookup appClassLookup, ClassLookup bootstrapClassLookup, String... rootClassNames) throws IOException {
+    public static ClassDependencyGraph generate(Lookup appLookup, Lookup bootstrapLookup, String... rootClassNames) throws IOException {
         var rootClasses = new ArrayList<ClassDependencyGraph.ClassNode>(); // the root classes nodes
         var reachableClasses = new HashMap<String, ClassDependencyGraph.ClassNode>(); // all reachable classes, processed and unprocessed
         var classesToProcess = new ArrayList<ClassDependencyGraph.ClassNode>(); // classes that still need to be processed
 
         // Lookup all root classes and add them to to the list of classes to be processed.
         for (String className : rootClassNames) {
-            var classNode = lookupClassNode(className, reachableClasses, bootstrapClassLookup, appClassLookup);
+            var classNode = lookupClassNode(className, reachableClasses, bootstrapLookup, appLookup);
             classNode.isRootClass = true;
             rootClasses.add(classNode);
             classesToProcess.add(classNode);
@@ -62,7 +62,7 @@ public class ClassDependencyGraphGenerator {
             // add the classes to this class' set of classes it depends on.
             Set<String> collectedClassNames = collectClassNames(classNode);
             for (String className : collectedClassNames) {
-                var otherClassNode = lookupClassNode(className, reachableClasses, bootstrapClassLookup, appClassLookup);
+                var otherClassNode = lookupClassNode(className, reachableClasses, bootstrapLookup, appLookup);
                 // Don't depend on this class itself
                 if (otherClassNode.classFile.getName().equals(classNode.classFile.getName()))
                     continue;
@@ -83,18 +83,18 @@ public class ClassDependencyGraphGenerator {
      *    <li><code>appClassLookup</code></li>
      * </ol>
      *
-     * @param className            the name of the class to lookup
-     * @param knownClasses         the classes that have been loaded so far
-     * @param bootstrapClassLookup the {@link ClassLookup} to lookup bootstrap classes in
-     * @param appClassLookup       the {@link ClassLookup} to lookup app classes in
+     * @param className       the name of the class to lookup
+     * @param knownClasses    the classes that have been loaded so far
+     * @param bootstrapLookup the {@link Lookup} to lookup bootstrap classes in
+     * @param appLookup       the {@link Lookup} to lookup app classes in
      * @return the found {@link ClassDependencyGraph.ClassNode}
      * @throws IOException in case the class could not be found or read
      */
-    private static ClassDependencyGraph.ClassNode lookupClassNode(String className, Map<String, ClassDependencyGraph.ClassNode> knownClasses, ClassLookup bootstrapClassLookup, ClassLookup appClassLookup) throws IOException {
+    private static ClassDependencyGraph.ClassNode lookupClassNode(String className, Map<String, ClassDependencyGraph.ClassNode> knownClasses, Lookup bootstrapLookup, Lookup appLookup) throws IOException {
         if (knownClasses.containsKey(className)) return knownClasses.get(className);
-        var bytes = bootstrapClassLookup.findClass(className);
+        var bytes = bootstrapLookup.findClass(className);
         var isAppClass = bytes == null;
-        if (bytes == null) bytes = appClassLookup.findClass(className);
+        if (bytes == null) bytes = appLookup.findClass(className);
         if (bytes == null)
             new IOException("Couldn't find class " + className + " in app or bootstrap class lookup.");
         var classFile = ClassFileReader.readClassFile(className, bytes);
