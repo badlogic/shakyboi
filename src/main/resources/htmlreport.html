@@ -1,0 +1,42 @@
+<html>
+<body>
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<div id="report" style="display: flex; flex-direction: row;">
+    <div style="width: 50%;">
+        <h2>Reachable classes ({{reachableClasses.length}})</h2>
+        <div>Filter: <input type="text" v-model="reachableClassFilter" style="width: 20em;"></div>
+        <hl></hl>
+        <div v-for="c in filteredReachableClasses">{{ c.name }}</div>
+    </div>
+    <div>
+        <h2>Removed classes ({{removedClasses.length}})</h2>
+        <div>Filter: <input type="text" v-model="removedClassFilter" style="width: 20em;"></div>
+        <div v-for="c in filteredRemovedClasses">{{ c }}</div>
+    </div>
+</div>
+<script>
+new Vue({
+    el: "#report",
+    data: {
+        reachableClassFilter: "",
+        removedClassFilter: "",
+        %data%
+    },
+    computed: {
+        filteredReachableClasses() {
+            return this.reachableClasses.filter(c => {
+                if (this.reachableClassFilter == "" || this.reachableClassFilter == null) return true;
+                return c.name.toLowerCase().indexOf(this.reachableClassFilter) > -1;
+            });
+        },
+        filteredRemovedClasses() {
+            return this.removedClasses.filter(c => {
+                if (this.removedClassFilter == "" || this.removedClassFilter == null) return true;
+                return c.toLowerCase().indexOf(this.removedClassFilter) > -1;
+            });
+        }
+    }
+});
+</script>
+</body>
+</html>

@@ -3,7 +3,7 @@ package io.marioslab.shakyboi.lookup;
 import java.util.List;
 
 /**
- * A lookup provides the raw bytes of classes and resources fetched from
+ * A lookup provides the raw bytes of classes and other resources fetched from
  * some place.
  */
 public interface Lookup {

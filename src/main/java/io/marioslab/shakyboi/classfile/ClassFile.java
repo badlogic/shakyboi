@@ -68,22 +68,19 @@ public class ClassFile {
     // Attributes
     public static final String ATTR_CONSTANTVALUE = "ConstantValue";
     public static final String ATTR_CODE = "Code";
-
-
-    public String sourceFile;
-    public byte[] originalData;
-
-    public int magic = 0xcafebabe;
-    public int minorVersion;
-    public int majorVersion;
     public final List<ConstantPoolEntry> constantPool = new ArrayList<>();
-    public int accessFlags;
-    public int thisClass;
-    public int superClass;
     public final List<Integer> interfaces = new ArrayList<>();
     public final List<MemberInfo> fields = new ArrayList<>();
     public final List<MemberInfo> methods = new ArrayList<>();
     public final List<AttributeInfo> attributes = new ArrayList<>();
+    public String sourceFile;
+    public byte[] originalData;
+    public int magic = 0xcafebabe;
+    public int minorVersion;
+    public int majorVersion;
+    public int accessFlags;
+    public int thisClass;
+    public int superClass;
 
     public ClassFile(String sourceFile, byte[] originalData) {
         this.sourceFile = sourceFile;
@@ -354,10 +351,10 @@ public class ClassFile {
     }
 
     public static class MemberInfo {
+        public final ArrayList<AttributeInfo> attributes = new ArrayList<>();
         public int accessFlags;
         public int nameIndex;
         public int descriptorIndex;
-        public final ArrayList<AttributeInfo> attributes = new ArrayList<>();
         public ClassFile clazz;
 
         public MemberInfo(ClassFile clz, int accessFlags, int nameIndex, int descriptorIndex) {

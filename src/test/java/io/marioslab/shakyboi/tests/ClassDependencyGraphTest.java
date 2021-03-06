@@ -7,6 +7,7 @@ import io.marioslab.shakyboi.lookup.JrtImageLookup;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -16,7 +17,8 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 public class ClassDependencyGraphTest {
     @Test
     public void testSimple() throws IOException {
-        var graph = ClassDependencyGraphGenerator.generate(new ClassLoaderLookup(), new JrtImageLookup(), "io/marioslab/shakyboi/tests/apps/simple/App");
+        var warnings = new ArrayList<String>();
+        var graph = ClassDependencyGraphGenerator.generate(new ClassLoaderLookup(), new JrtImageLookup(), warnings, "io/marioslab/shakyboi/tests/apps/simple/App");
         var appClasses = new HashMap<String, ClassDependencyGraph.ClassNode>();
         var bootstrapClasses = new HashMap<String, ClassDependencyGraph.ClassNode>();
         for (var entry : graph.reachableClasses.entrySet()) {
@@ -48,6 +50,6 @@ public class ClassDependencyGraphTest {
         }
         assertEquals(4, foundBootstrapClasses);
 
-        System.out.println(ClassDependencyGraphGenerator.generateDotFile(graph));
+        System.out.println(ClassDependencyGraphGenerator.generateDotFile(graph, false));
     }
 }
