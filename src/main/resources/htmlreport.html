@@ -2,13 +2,18 @@
 <body>
 <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
 <div id="report" style="display: flex; flex-direction: row;">
-    <div style="width: 50%;">
+    <div style="overflow: auto;">
         <h2>Reachable classes ({{reachableClasses.length}})</h2>
         <div>Filter: <input type="text" v-model="reachableClassFilter" style="width: 20em;"></div>
-        <hl></hl>
-        <div v-for="c in filteredReachableClasses">{{ c.name }}</div>
+        <div v-for="c in filteredReachableClasses">
+            <div><strong>{{ c.name }}</strong></div>
+            <div style="margin-left: 1em;">depends on ({{c.dependsOn.length}})</div>
+            <div style="margin-left: 2em;" v-for="d in c.dependsOn">{{d}}</div>
+            <div style="margin-left: 1em;">referenced by ({{c.referencedBy.length}})</div>
+            <div style="margin-left: 2em;" v-for="d in c.referencedBy">{{d}}</div>
+        </div>
     </div>
-    <div>
+    <div style="overflow: auto;">
         <h2>Removed classes ({{removedClasses.length}})</h2>
         <div>Filter: <input type="text" v-model="removedClassFilter" style="width: 20em;"></div>
         <div v-for="c in filteredRemovedClasses">{{ c }}</div>

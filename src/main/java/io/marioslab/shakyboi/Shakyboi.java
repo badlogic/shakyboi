@@ -80,7 +80,7 @@ public class Shakyboi {
         var removedJson = new StringBuilder();
         removedJson.append("[\n");
         for (int i = 0; i < removedClasses.size(); i++) {
-            removedJson.append('"' + removedClasses.get(i) + '"');
+            removedJson.append('"' + removedClasses.get(i).replace('/', '.') + '"');
             if (i < removedClasses.size() - 1) removedJson.append(",\n");
             else removedJson.append("\n");
         }

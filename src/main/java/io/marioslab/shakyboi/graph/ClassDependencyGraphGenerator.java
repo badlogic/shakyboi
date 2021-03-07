@@ -38,7 +38,7 @@ public class ClassDependencyGraphGenerator {
         for (String className : rootClassNames) {
             var classNode = lookupClassNode(className, reachableClasses, bootstrapLookup, appLookup);
             if (classNode == null)
-                throw new IOException("Couldn't find root class " + className.replace('/', '.') + " in either app or bootstrap classpath.");
+                throw new IOException("Couldn't find root class " + className.replace('/', '.') + " in either app or bootstrap lookup.");
             classNode.isRootClass = true;
             rootClasses.add(classNode);
             classesToProcess.add(classNode);
@@ -66,7 +66,7 @@ public class ClassDependencyGraphGenerator {
             for (String className : collectedClassNames) {
                 var otherClassNode = lookupClassNode(className, reachableClasses, bootstrapLookup, appLookup);
                 if (otherClassNode == null) {
-                    warnings.add("Class " + classNode.classFile.getName().replace('/', '.') + " depends on " + className.replace('/', '.') + ", but " + className.replace('/', '.') + " could not be found in app or bootstrap classpath.");
+                    warnings.add("Class " + classNode.classFile.getName().replace('/', '.') + " depends on " + className.replace('/', '.') + ", but " + className.replace('/', '.') + " could not be found in app or bootstrap lookup.");
                     continue;
                 }
                 // Don't depend on this class itself
@@ -76,6 +76,7 @@ public class ClassDependencyGraphGenerator {
                     classesToProcess.add(otherClassNode);
                 }
                 classNode.dependsOn.add(otherClassNode);
+                otherClassNode.referencedBy.add(classNode.classFile.getName());
             }
         }
         return new ClassDependencyGraph(rootClasses, reachableClasses);
@@ -249,10 +250,10 @@ public class ClassDependencyGraphGenerator {
      *
      * <code>
      * [
-     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ] },
-     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ] },
-     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ] },
-     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ] }
+     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ], "referencedBy": [ "other.class.Name.", "and.another.One" ]},
+     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ], "referencedBy": [ "other.class.Name.", "and.another.One" ]},
+     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ], "referencedBy": [ "other.class.Name.", "and.another.One" ]},
+     * { "name": "some.class.Name", "isAppClass": false, "isRootClass": true, "dependsOn": [ "other.class.Name.", "and.another.One" ], "referencedBy": [ "other.class.Name.", "and.another.One" ]},
      * ...
      * ]
      * </code>
@@ -274,10 +275,16 @@ public class ClassDependencyGraphGenerator {
                 var classNode = classNodeEntry.getValue();
                 out.print("{ \"name\": \"" + className.replace('/', '.') + "\", \"isAppClass\": " + classNode.isAppClass + ", \"isRootClass\": " + classNode.isRootClass + ", \"dependsOn\": [");
 
-                var dependsOn = classNode.dependsOn.stream().filter(c -> onlyAppClasses ? c.isAppClass : true).iterator();
+                var dependsOn = classNode.dependsOn.stream().filter(c -> onlyAppClasses ? c.isAppClass : true).sorted((a, b) -> a.classFile.getName().compareTo(b.classFile.getName())).iterator();
                 while (dependsOn.hasNext()) {
                     var otherClass = dependsOn.next();
                     out.print("\"" + otherClass.classFile.getName().replace('/', '.') + (dependsOn.hasNext() ? "\", " : "\""));
+                }
+                out.print("], \"referencedBy\": [");
+                var referencedBy = classNode.referencedBy.stream().sorted().iterator();
+                while (referencedBy.hasNext()) {
+                    var otherClass = referencedBy.next();
+                    out.print("\"" + otherClass.replace('/', '.') + (referencedBy.hasNext() ? "\", " : "\""));
                 }
                 out.println(classNodeEntries.hasNext() ? "] }," : "] }");
             }
