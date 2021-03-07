@@ -18,7 +18,7 @@ java -jar shakyboi.jar \
     --output myapp-shaky.jar
 ```
 
-This will read `myapp.jar`, trace all class dependencies starting at the root class `my.app.MainClass`, and output all resource files found in `myapp.jar` as well as all `.class` files of all classes reachable from `my.app.MainClass` to `myapp-shaky.jar`.
+This will read `myapp.jar`, trace all class dependencies starting at the root class `my.app.MainClass`, and output all resource files found in `myapp.jar` as well as all `.class` files of all classes reachable from `my.app.MainClass` to `myapp-shaky.jar`. You can specify multiple `-app` sources, either `.jar` files or directories.
 
 Shakyboi is unable to find classes only referred to via reflection. For this case, add these classes as roots.
 

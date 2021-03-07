@@ -30,7 +30,7 @@ public class Shakyboi {
      * @return {@link Statistics} generated during class tree shaking.
      * @throws IOException in case a file couldn't be read from a lookup.
      */
-    public Statistics shake(Settings settings) throws IOException {
+    public static Statistics shake(Settings settings) throws IOException {
         // expand root classes
         long timeRootClassExpansion = System.nanoTime();
         var rootClassNames = new ArrayList<String>();
@@ -80,16 +80,15 @@ public class Shakyboi {
         return new Statistics(inputClasses.size(), reachableAppClasses.size(), warnings, timeRootClassExpansion / 1e9f, timeClassDependencyGraph / 1e9f, timeWriteJar / 1e9f, timeReport / 1e9f);
     }
 
-    private String generateJson(Settings settings, List<String> inputClasses, ClassDependencyGraph classDependencyGraph) {
+    private static String generateJson(List<String> inputClasses, ClassDependencyGraph classDependencyGraph) {
         var reachableJson = ClassDependencyGraphGenerator.generateJSON(classDependencyGraph, true);
         var removedClasses = inputClasses.stream()
                 .map(s -> s.replace(".class", ""))
-                .filter(c -> !classDependencyGraph.reachableClasses.containsKey(c)).collect(Collectors.toList());
-        removedClasses.sort((a, b) -> a.compareTo(b));
+                .filter(c -> !classDependencyGraph.reachableClasses.containsKey(c)).sorted(String::compareTo).collect(Collectors.toList());
         var removedJson = new StringBuilder();
         removedJson.append("[\n");
         for (int i = 0; i < removedClasses.size(); i++) {
-            removedJson.append('"' + removedClasses.get(i).replace('/', '.') + '"');
+            removedJson.append('"').append(removedClasses.get(i).replace('/', '.')).append('"');
             if (i < removedClasses.size() - 1) removedJson.append(",\n");
             else removedJson.append("\n");
         }
@@ -97,15 +96,15 @@ public class Shakyboi {
         return "\"reachableClasses\": " + reachableJson + ", \"removedClasses\": " + removedJson;
     }
 
-    private void generateJsonReport(Settings settings, List<String> inputClasses, ClassDependencyGraph classDependencyGraph) throws IOException {
-        String json = generateJson(settings, inputClasses, classDependencyGraph);
+    private static void generateJsonReport(Settings settings, List<String> inputClasses, ClassDependencyGraph classDependencyGraph) throws IOException {
+        String json = generateJson(inputClasses, classDependencyGraph);
         try (FileWriter writer = new FileWriter(settings.jsonReport)) {
             writer.write("{" + json + "}");
         }
     }
 
-    private void generateHtmlReport(Settings settings, List<String> inputClasses, ClassDependencyGraph classDependencyGraph) throws IOException {
-        var json = generateJson(settings, inputClasses, classDependencyGraph);
+    private static void generateHtmlReport(Settings settings, List<String> inputClasses, ClassDependencyGraph classDependencyGraph) throws IOException {
+        var json = generateJson(inputClasses, classDependencyGraph);
         var template = new String(Shakyboi.class.getResourceAsStream("/htmlreport.html").readAllBytes(), StandardCharsets.UTF_8);
         template = template.replace("%data%", json);
         try (FileWriter out = new FileWriter(settings.htmlReport)) {
