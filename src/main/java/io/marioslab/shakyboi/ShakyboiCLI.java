@@ -12,19 +12,25 @@ import java.util.ArrayList;
  */
 public class ShakyboiCLI {
     public static void main(String[] args) throws IOException {
-        long start = System.nanoTime();
         var settings = parseArgs(args);
+        long start = System.nanoTime();
         Shakyboi.Statistics stats = new Shakyboi().shake(settings);
+        var took = (System.nanoTime() - start) / 1e9;
         stats.warnings.forEach(s -> System.err.println("WARNING: " + s));
-        if (settings.output != null) System.out.println("Output:                " + settings.output.getAbsolutePath());
+        System.out.println("Root class expansion:    " + stats.timeRootClassExpansion + " secs");
+        System.out.println("Class dependency graph:  " + stats.timeRootClassExpansion + " secs");
+        System.out.println("Write jar:               " + stats.timeWriteJar + " secs");
+        System.out.println("Write report:            " + stats.timeWriteReport + " secs");
+        System.out.println("Took:                    " + took + " secs");
+
+        if (settings.output != null) System.out.println("Output:                  " + settings.output.getAbsolutePath());
         if (settings.htmlReport != null)
-            System.out.println("HTML report:           " + settings.htmlReport.getAbsolutePath());
+            System.out.println("HTML report:             " + settings.htmlReport.getAbsolutePath());
         if (settings.jsonReport != null)
-            System.out.println("JSON report:           " + settings.jsonReport.getAbsolutePath());
-        System.out.println("Total app classes:     " + stats.totalClasses);
-        System.out.println("Reachable app classes: " + stats.reachableClasses);
-        System.out.println("Reduction:             " + (int) ((1 - ((float) stats.reachableClasses / stats.totalClasses)) * 100) + "%");
-        System.out.println("Took:                  " + (System.nanoTime() - start) / 1e9 + " secs");
+            System.out.println("JSON report:             " + settings.jsonReport.getAbsolutePath());
+        System.out.println("Total app classes:       " + stats.totalClasses);
+        System.out.println("Reachable app classes:   " + stats.reachableClasses);
+        System.out.println("Reduction:               " + (int) ((1 - ((float) stats.reachableClasses / stats.totalClasses)) * 100) + "%");
     }
 
     static void printHelp() {
